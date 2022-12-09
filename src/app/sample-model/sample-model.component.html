@@ -1,0 +1,107 @@
+<coreui-modal (shown)="modalShown()" (hidden)="modalHidden()" modalWidth="90" [scrollable]="true" modalHeight="auto"  #basicModal>
+  <ng-template #titleTemplate>
+    {{title}}
+  </ng-template>
+  <ng-template #titleCloseButtonTemplate>
+    <button type="button" (click)="closeBasicModal()" coreUIButton="icon-large"><i coreUIIcon="close"></i></button>
+  </ng-template>
+  <ng-template #contentTemplate>
+    <form class="Core-Form" [formGroup]="addEditRuleSetForm">
+      <coreui-form-field label="Value">
+        <input coreUIInput formControlName="value"/>
+        <coreui-form-error>Required</coreui-form-error>
+      </coreui-form-field>
+    </form>
+<!--      Human Readable Rule -->
+    <div>Human Readable Rule</div>
+    <div style="display: block">
+      <div class="col" style="width: 18%;height:200px;">
+
+      </div>
+    <div class="col" style="width: 18%;height:auto;" >
+      <form class="Core-Form" [formGroup]="multiSearchSelectFormGroup">
+        <coreui-form-field>
+          <coreui-select placeholder="Select an option" [searchable]="true" ><!--(searchValueChange)="onSearchChange($event)"-->
+            <coreui-option *ngFor="let item of filteredItems" [value]="item">{{item}}</coreui-option>
+            <span *ngIf="filteredItems.length === 0" class="no-results">No results found...</span>
+          </coreui-select>
+        </coreui-form-field>
+      </form>
+    </div>
+
+    <div class='col' style="width: 60%;background-color: aqua;" >
+      <coreui-scroll-indicator>
+        <!-- Container that scrolls -->
+        <div coreUIScrollIndicatorTarget class="vertical-scrollable">
+          <!-- Container that grows -->
+          <div style="display: block">
+            <!--------------        query:1 ------------------>
+            <div>
+              <form class="Core-Form" [formGroup]="queryGenerateForm" style="width:100%">
+                <coreui-checkbox-group  class="queryField" orientation="horizontal">
+                  <coreui-form-field>
+                    <input type="checkbox" coreUICheckbox formControlName="Checkbox" />
+                  </coreui-form-field>
+                </coreui-checkbox-group>
+              <coreui-form-field class="queryField">
+                <input coreUIInput formControlName="EPcode" placeholder="EP Code" style="width: 70px; padding:8px 2px 8px; text-align: center"/>
+              </coreui-form-field>
+
+                <coreui-form-field class="queryField" >
+                  <coreui-select type="secondary" formControlName="opeartor" placeholder=">" #microSelect style="margin-top: 5px">
+                    <coreui-option [value]="'>'">></coreui-option>
+                    <coreui-option [value]="'<'"><</coreui-option>
+                    <coreui-option [value]="'>='">>=</coreui-option>
+                    <coreui-option [value]="''">-</coreui-option>
+                  </coreui-select>
+                </coreui-form-field>
+
+                <coreui-form-field class="queryField">
+                  <input coreUIInput  formControlName="parameter" placeholder="Parameter for Validation" style="width: 150px"/>
+                </coreui-form-field>
+
+                <coreui-form-field class="queryField">
+                  <coreui-select  placeholder="Select" formControlName="logicalOperator" style="width: 70px; float: right;" >
+                    <coreui-option [value]="1">AND</coreui-option>
+                    <coreui-option [value]="2">OR</coreui-option>
+                    <coreui-option [value]="3">NOT</coreui-option>
+                  </coreui-select>
+                </coreui-form-field>
+
+                <coreui-form-field class="queryField">
+                  <button coreUIButton="micro-secondary" >+</button>
+                  <input coreUIInput name="firstName" placeholder="(" readonly coreUIFixedWidth="extraShort" style="width: 25px;height: 25px">
+                  <button coreUIButton="micro-secondary" >-</button>
+                </coreui-form-field>
+                <coreui-form-field class="queryField">
+                  <button coreUIButton="micro-secondary" style="margin-left: 20px">+</button>
+                  <input coreUIInput name="firstName" placeholder=")" readonly coreUIFixedWidth="extraShort" style="width: 25px;height: 25px"/>
+                  <button coreUIButton="micro-secondary" >-</button>
+                </coreui-form-field>
+              </form>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
+
+          </div>
+        </div>
+      </coreui-scroll-indicator>
+    </div>
+    </div>
+
+    <form class="Core-Form" [formGroup]="queryDisplayForm">
+      <coreui-form-field>
+        <textarea rows="2" formControlName="query" readonly style="width: 100%; margin-top: 10px" ></textarea>
+      </coreui-form-field>
+    </form>
+
+
+  </ng-template>
+  <ng-template #buttonsTemplate>
+    <button coreUIButton="secondary" (click)="closeBasicModal()">Cancel</button>
+    <button coreUIButton (click)="closeBasicModal()">Submit</button>
+  </ng-template>
+</coreui-modal>
+
+<button coreUIButton (click)="launchBasicModal()" >Click</button>

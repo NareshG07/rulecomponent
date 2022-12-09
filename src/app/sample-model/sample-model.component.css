@@ -1,0 +1,39 @@
+
+
+.inlineSelect {
+  display: inline-block;
+  max-width: 25%;
+  min-width: 10%;
+  padding-right: 8%;
+}
+.col{
+  float:left;
+}
+.vertical-scrollable {
+  overflow: scroll;
+  height: 200px;
+  width: 100%;
+}
+.vertical-scrollable div div{
+  margin-bottom: 10px;
+  width: 100%;
+  height: auto;
+  border: 2px solid blue;
+}
+.queryField{
+  float: left;
+  padding-left: 5px;
+}
+.Core-Icon--add::before{
+  margin-top: 2px;
+  padding: 2px;
+  border: 1px solid;
+}
+.inline-input span {
+  margin: 0 6px;
+}
+div.Core-Modal-title{
+  margin-top: 0 !important;
+  margin-bottom: 0;
+}
+
