@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {ModalComponent} from "@epsilon/core-ui";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {query} from "@angular/animations";
 
 @Component({
@@ -8,9 +8,38 @@ import {query} from "@angular/animations";
   templateUrl: './sample-model.component.html',
   styleUrls: ['./sample-model.component.css']
 })
-export class SampleModelComponent implements OnChanges{
+export class SampleModelComponent implements OnInit{
   @ViewChild('basicModal', { static: true }) private basicModal!: ModalComponent;
   title:String='Create Rule';
+  public queryGenerateForm!: FormGroup;
+
+  constructor(private formBuilder: FormBuilder) { }
+
+  ngOnInit() {
+    this.queryGenerateForm = this.formBuilder.group({
+      queries: this.formBuilder.array([this.createQueryFormGroup()])
+    });
+  }
+
+  private createQueryFormGroup(): FormGroup {
+    return new FormGroup({
+      Checkbox : new FormControl(),
+      EPcode   : new FormControl(),
+      opeartor : new FormControl(),
+      parameter : new FormControl(),
+      logicalOperator : new FormControl(),
+    })
+  }
+
+  public addQueryFormGroup() {
+    const queries = this.queryGenerateForm.get('queries') as FormArray
+    queries.push(this.createQueryFormGroup());
+    console.log(queries);
+  }
+
+  get queryArray(): FormArray {
+    return <FormArray> this.queryGenerateForm.get('queries');
+  }
   public multiSearchSelectFormGroup = new FormGroup({
     selectDefault: new FormControl([])
   });
@@ -19,14 +48,14 @@ export class SampleModelComponent implements OnChanges{
     value: new FormControl('', [Validators.required])
   });
 
-  public queryGenerateForm = new FormGroup(
-    {
-      Checkbox : new FormControl(),
-      EPcode   : new FormControl(),
-      opeartor : new FormControl(),
-      parameter : new FormControl(),
-      logicalOperator : new FormControl(),
-      })
+  // public queryGenerateForm = new FormGroup(
+  //   {
+  //     Checkbox : new FormControl(),
+  //     EPcode   : new FormControl(),
+  //     opeartor : new FormControl(),
+  //     parameter : new FormControl(),
+  //     logicalOperator : new FormControl(),
+  //     })
 
   public queryDisplayForm = new FormGroup(
     {
@@ -64,7 +93,6 @@ export class SampleModelComponent implements OnChanges{
   }
 
   public launchBasicModal() {
-    this.queryGenerateForm.valueChanges.subscribe(update => this.updateQuery())
     this.basicModal.show().then(() => {
       console.log('shown called from consumer');
     });
@@ -79,18 +107,23 @@ export class SampleModelComponent implements OnChanges{
   }
 
   public updateQuery() {
-    if (this.queryGenerateForm.controls['EPcode'].value &&
-      this.queryGenerateForm.controls['opeartor'].value &&
-      this.queryGenerateForm.controls['parameter'].value) {
-    this.completeQuery = this.queryGenerateForm.controls['EPcode'].value +
-      this.queryGenerateForm.controls['opeartor'].value +
-      this.queryGenerateForm.controls['parameter'].value;
-  }
-    this.queryDisplayForm.controls['query'].setValue(this.completeQuery) ;
+    //   if (this.queryGenerateForm.controls['EPcode'].value &&
+    //     this.queryGenerateForm.controls['opeartor'].value &&
+    //     this.queryGenerateForm.controls['parameter'].value) {
+    //   this.completeQuery = this.queryGenerateForm.controls['EPcode'].value +
+    //     this.queryGenerateForm.controls['opeartor'].value +
+    //     this.queryGenerateForm.controls['parameter'].value;
+    // }
+    //   this.queryDisplayForm.controls['query'].setValue(this.completeQuery) ;
+
   }
 
-
-  ngOnChanges(changes: SimpleChanges): void {
-  this.updateQuery();
+  public addOpeningBracket(){
+    this.completeQuery +='(';
+    this.updateQuery();
   }
+
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   this.updateQuery();
+  // }
 }
