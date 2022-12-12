@@ -17,7 +17,7 @@ export class SampleModelComponent implements OnInit{
   public logicalOperatorValues:string[]=['AND','OR','NOT'];
   public finalQueryArray: string[]=[];
   public finalQuery:string='';
-  public queryCounter:number=0;
+  public queryDivCounter:number=0;
   public queryIndexArray:number[]=[];
 
   constructor(private formBuilder: FormBuilder) { }
@@ -39,8 +39,13 @@ export class SampleModelComponent implements OnInit{
     })
   }
 
-  public addQueryFormGroup() {
-    this.queries.push(this.createQueryFormGroup());
+  public addQueryFormGroup(i:number) {
+
+    if(i==this.queryDivCounter){
+      this.queries.push(this.createQueryFormGroup());
+      this.queryDivCounter++;
+    }
+
   }
 
   get queryArray(): FormArray {
@@ -176,7 +181,8 @@ export class SampleModelComponent implements OnInit{
   }
 
   public deleteBracket(){
-    if(this.finalQueryArray[-1]=='( ' || this.finalQueryArray[-1]==' )' )
+    console.log(this.finalQueryArray[this.finalQueryArray.length-1]);
+    if(this.finalQueryArray[this.finalQueryArray.length-1]=='( ' || this.finalQueryArray[this.finalQueryArray.length-1]==' )' )
     this.finalQueryArray.pop();
     this.displayQuery();
   }

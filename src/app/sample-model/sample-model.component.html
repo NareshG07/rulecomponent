@@ -52,7 +52,7 @@
         </form>
       </div>
 
-      <div class='col' style="width: 50%; background-color: lightgrey">
+      <div class='col' style="width: 50%; background-color: #F2F2F2">
         <coreui-scroll-indicator>
           <!-- Container that scrolls -->
           <div coreUIScrollIndicatorTarget class="vertical-scrollable">
@@ -83,12 +83,12 @@
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField">
-                    <coreui-select  placeholder="Select" formControlName="logicalOperator" style="width: 70px; float: right;"  (ngModelChange)="addQueryFormGroup()">
+                    <coreui-select  placeholder="Select" formControlName="logicalOperator" style="width: 70px; float: right;"  (ngModelChange)="addQueryFormGroup(i)">
                       <coreui-option *ngFor="let x of logicalOperatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
                   <coreui-form-field class="queryField">
-                  <button type=button coreUIButton="icon">
+                  <button type=button coreUIButton="icon" style="background-color: white " >
                     <i coreUIIcon="arrowDown" (click)="updateSingleQuery(i)"></i>
                   </button>
                   </coreui-form-field>
