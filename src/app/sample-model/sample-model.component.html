@@ -8,17 +8,40 @@
   <ng-template #contentTemplate>
     <form class="Core-Form" [formGroup]="addEditRuleSetForm">
       <coreui-form-field label="Value">
-        <input coreUIInput formControlName="value"/>
+        <input coreUIInput formControlName="value" style="width: 30%"/>
         <coreui-form-error>Required</coreui-form-error>
       </coreui-form-field>
     </form>
     <!--      Human Readable Rule -->
-    <div>Human Readable Rule</div>
     <div style="display: block">
-      <div class="col" style="width: 20%;height:200px; background-color: lightslategrey">
+    <div style="float: left">Human Readable Rule</div>
+<!--      <div style="float: left; width: 55%; height: 2px"></div>-->
+    <div style="float: right">
+    <coreui-form-field class="queryField" >
+      <button type=button coreUIButton="icon" >
+        <i coreUIIcon="add" (click)="addOpenBracket()"></i>
+      </button>
+      <input coreUIInput class="brackets" placeholder="(" readonly coreUIFixedWidth="extraShort" >
+      <button type=button coreUIButton="icon">
+        <i coreUIIcon="collapse" (click)="deleteBracket()"></i>
+      </button>
+    </coreui-form-field>
+    <coreui-form-field class="queryField">
+      <button type=button coreUIButton="icon" style="margin-left: 20px" >
+        <i coreUIIcon="add" (click)="addCloseBracket()" ></i>
+      </button>
+      <input coreUIInput  class="brackets" placeholder=")" readonly coreUIFixedWidth="extraShort" >
+      <button type=button coreUIButton="icon">
+        <i coreUIIcon="collapse" (click)="deleteBracket()" ></i>
+      </button>
+    </coreui-form-field>
+    </div>
+    </div>
+    <div style="display: block">
+      <div class="col" style="width: 14%;height:200px;">
 
       </div>
-      <div class="col" style="width: 30%;height:auto;" >
+      <div class="col" style="width: 36%;height:auto;" >
         <form class="Core-Form" [formGroup]="multiSearchSelectFormGroup">
           <coreui-form-field>
             <coreui-select placeholder="Select an option" [searchable]="true" ><!--(searchValueChange)="onSearchChange($event)"-->
@@ -29,7 +52,7 @@
         </form>
       </div>
 
-      <div class='col' style="width: 48%;background-color: aqua;" >
+      <div class='col' style="width: 50%; background-color: lightgrey">
         <coreui-scroll-indicator>
           <!-- Container that scrolls -->
           <div coreUIScrollIndicatorTarget class="vertical-scrollable">
@@ -50,35 +73,24 @@
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField" >
-                    <coreui-select type="secondary" formControlName="opeartor" placeholder=">" #microSelect style="margin-top: 5px">
-                      <coreui-option [value]="'>'">></coreui-option>
-                      <coreui-option [value]="'<'"><</coreui-option>
-                      <coreui-option [value]="'>='">>=</coreui-option>
-                      <coreui-option [value]="''">-</coreui-option>
+                    <coreui-select type="secondary" formControlName="operator" #microSelect style="margin-top: 5px">
+                      <coreui-option *ngFor="let x of operatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField">
-                    <input coreUIInput  formControlName="parameter" placeholder="Parameter for Validation" style="width: 150px"/>
+                    <input coreUIInput  formControlName="parameter" placeholder="Parameter for Validation" style="width: 170px"/>
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField">
-                    <coreui-select  placeholder="Select" formControlName="logicalOperator" style="width: 70px; float: right;"  (click)="addQueryFormGroup()">
-                      <coreui-option [value]="1">AND</coreui-option>
-                      <coreui-option [value]="2">OR</coreui-option>
-                      <coreui-option [value]="3">NOT</coreui-option>
+                    <coreui-select  placeholder="Select" formControlName="logicalOperator" style="width: 70px; float: right;"  (ngModelChange)="addQueryFormGroup()">
+                      <coreui-option *ngFor="let x of logicalOperatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
-
                   <coreui-form-field class="queryField">
-                    <button coreUIButton="micro-secondary" (click)="addQueryFormGroup(); false">+</button>
-                    <input coreUIInput name="firstName" placeholder="(" readonly coreUIFixedWidth="extraShort" style="width: 25px;height: 25px">
-                    <button coreUIButton="micro-secondary" >-</button>
-                  </coreui-form-field>
-                  <coreui-form-field class="queryField">
-                    <button coreUIButton="micro-secondary" style="margin-left: 20px">+</button>
-                    <input coreUIInput name="firstName" placeholder=")" readonly coreUIFixedWidth="extraShort" style="width: 25px;height: 25px"/>
-                    <button coreUIButton="micro-secondary" >-</button>
+                  <button type=button coreUIButton="icon">
+                    <i coreUIIcon="arrowDown" (click)="updateSingleQuery(i)"></i>
+                  </button>
                   </coreui-form-field>
                 </form>
               </div>
@@ -97,7 +109,7 @@
 
     <form class="Core-Form" [formGroup]="queryDisplayForm">
       <coreui-form-field>
-        <textarea rows="2" formControlName="query" readonly style="width: 100%; margin-top: 10px" ></textarea>
+        <textarea rows="2" formControlName="query" [(ngModel)]="this.finalQuery" readonly style="width: 100%; margin-top: 10px; font-family: 'Courier New' " ></textarea>
       </coreui-form-field>
     </form>
 

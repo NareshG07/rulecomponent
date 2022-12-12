@@ -1,4 +1,6 @@
-
+.Core-Form{
+  max-width: 100%;
+}
 
 .inlineSelect {
   display: inline-block;
@@ -11,18 +13,24 @@
 }
 .vertical-scrollable {
   overflow: scroll;
-  height: 200px;
   width: 100%;
+  height: 200px;
 }
 .vertical-scrollable div div{
   margin-bottom: 10px;
   width: 100%;
   height: auto;
-  border: 2px solid blue;
 }
 .queryField{
   float: left;
-  padding-left: 5px;
+  padding-left: 10px;
+}
+.queryField .brackets{
+  width: 30px;height: 30px;
+  padding:0;
+  font-size: large;
+  text-align: center;
+  border: 1px gray solid;
 }
 .Core-Icon--add::before{
   margin-top: 2px;
@@ -32,8 +40,7 @@
 .inline-input span {
   margin: 0 6px;
 }
-div.Core-Modal-title{
-  margin-top: 0 !important;
-  margin-bottom: 0;
+.Core-Icon--add::before{
+  border: none;
 }
 

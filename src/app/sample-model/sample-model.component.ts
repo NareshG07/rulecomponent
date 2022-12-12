@@ -12,6 +12,13 @@ export class SampleModelComponent implements OnInit{
   @ViewChild('basicModal', { static: true }) private basicModal!: ModalComponent;
   title:String='Create Rule';
   public queryGenerateForm!: FormGroup;
+  public queries:any;
+  public operatorValues:string[] = ['>','<','=','>=','<='];
+  public logicalOperatorValues:string[]=['AND','OR','NOT'];
+  public finalQueryArray: string[]=[];
+  public finalQuery:string='';
+  public queryCounter:number=0;
+  public queryIndexArray:number[]=[];
 
   constructor(private formBuilder: FormBuilder) { }
 
@@ -19,22 +26,21 @@ export class SampleModelComponent implements OnInit{
     this.queryGenerateForm = this.formBuilder.group({
       queries: this.formBuilder.array([this.createQueryFormGroup()])
     });
+    this.queries = this.queryGenerateForm.get('queries') as FormArray
   }
 
   private createQueryFormGroup(): FormGroup {
     return new FormGroup({
       Checkbox : new FormControl(),
       EPcode   : new FormControl(),
-      opeartor : new FormControl(),
+      operator : new FormControl(this.operatorValues[0]),
       parameter : new FormControl(),
       logicalOperator : new FormControl(),
     })
   }
 
   public addQueryFormGroup() {
-    const queries = this.queryGenerateForm.get('queries') as FormArray
-    queries.push(this.createQueryFormGroup());
-    console.log(queries);
+    this.queries.push(this.createQueryFormGroup());
   }
 
   get queryArray(): FormArray {
@@ -48,14 +54,6 @@ export class SampleModelComponent implements OnInit{
     value: new FormControl('', [Validators.required])
   });
 
-  // public queryGenerateForm = new FormGroup(
-  //   {
-  //     Checkbox : new FormControl(),
-  //     EPcode   : new FormControl(),
-  //     opeartor : new FormControl(),
-  //     parameter : new FormControl(),
-  //     logicalOperator : new FormControl(),
-  //     })
 
   public queryDisplayForm = new FormGroup(
     {
@@ -63,7 +61,7 @@ export class SampleModelComponent implements OnInit{
         Validators.required
       ])}
   )
-  private completeQuery:string = '';
+  public singleQuery:string = '';
   private items = [
     'Apples',
     'Avocados',
@@ -107,22 +105,81 @@ export class SampleModelComponent implements OnInit{
   }
 
   public updateQuery() {
-    //   if (this.queryGenerateForm.controls['EPcode'].value &&
-    //     this.queryGenerateForm.controls['opeartor'].value &&
-    //     this.queryGenerateForm.controls['parameter'].value) {
-    //   this.completeQuery = this.queryGenerateForm.controls['EPcode'].value +
-    //     this.queryGenerateForm.controls['opeartor'].value +
-    //     this.queryGenerateForm.controls['parameter'].value;
+    for(let i of this.queries.value)
+    {
+      console.log(i.EPcode);
+      console.log(i.opeartor);
+      console.log(i.parameter);
+    }
+
+  }
+
+  public updateSingleQuery(index:number){
+
+    let updateIndex=index;
+    this.singleQuery= this.queries.value[index].EPcode+ this.queries.value[index].operator+ this.queries.value[index].parameter;
+    this.singleQuery+=(this.queries.value[index].logicalOperator)?' '+this.queries.value[index].logicalOperator+' ':'';
+    // if(this.finalQueryArray.some(x=>x===this.singleQuery)){
+    //   updateIndex=this.finalQueryArray.indexOf(this.singleQuery);
+    //   console.log('updating single query at '+ updateIndex );
+    //   this.finalQueryArray[updateIndex]=this.singleQuery;
     // }
-    //   this.queryDisplayForm.controls['query'].setValue(this.completeQuery) ;
 
+    // updateIndex=this.UpdateQueryIndex(index);
+    // if(updateIndex==index){
+    //   this.finalQueryArray.push(this.singleQuery);
+    // }
+    // else{
+    //   this.finalQueryArray[updateIndex]=this.singleQuery;
+    // }
+    if(index>=this.queryIndexArray.length)
+    {
+      this.finalQueryArray.push(this.singleQuery);
+      this.queryIndexArray.push(this.finalQueryArray.length-1);
+    }
+    else{
+      updateIndex=this.queryIndexArray[index];
+      this.finalQueryArray[updateIndex]=this.singleQuery;
+    }
+    this.displayQuery();
+    this.singleQuery='';
+    console.log(this.finalQueryArray);
+    console.log(this.queryIndexArray);
   }
 
-  public addOpeningBracket(){
-    this.completeQuery +='(';
-    this.updateQuery();
+  public UpdateQueryIndex(i:number):number{
+    let count=-1;
+    this.finalQueryArray.forEach((value,index) =>{
+      if(value.includes('(') || value.includes(')')){
+        console.log('found bracket')
+      }
+      else{
+        count++;
+        console.log('found query');
+      }
+      if(count == i) {i=index; return; }
+    });
+    return i;
   }
 
+  public addOpenBracket(){
+    this.finalQueryArray.push('( ');
+    this.displayQuery();
+  }
+  public addCloseBracket(){
+    this.finalQueryArray.push(' )');
+    this.displayQuery();
+  }
+
+  public displayQuery(){
+    this.finalQuery = this.finalQueryArray.join('');
+  }
+
+  public deleteBracket(){
+    if(this.finalQueryArray[-1]=='( ' || this.finalQueryArray[-1]==' )' )
+    this.finalQueryArray.pop();
+    this.displayQuery();
+  }
   // ngOnChanges(changes: SimpleChanges): void {
   //   this.updateQuery();
   // }
