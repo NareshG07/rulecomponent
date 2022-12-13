@@ -2,6 +2,7 @@ import {ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges, ViewChil
 import {ModalComponent} from "@epsilon/core-ui";
 import {FormBuilder, FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {query} from "@angular/animations";
+import {Papa} from "ngx-papaparse";
 
 @Component({
   selector: 'app-sample-model',
@@ -20,7 +21,11 @@ export class SampleModelComponent implements OnInit{
   public queryDivCounter:number=0;
   public queryIndexArray:number[]=[];
 
-  constructor(private formBuilder: FormBuilder) { }
+  public tempEP='EP2'
+
+
+  constructor(private formBuilder: FormBuilder , private papa: Papa,
+              private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.queryGenerateForm = this.formBuilder.group({
@@ -68,25 +73,31 @@ export class SampleModelComponent implements OnInit{
   )
   public singleQuery:string = '';
   private items = [
-    'Apples',
-    'Avocados',
-    'Bananas',
-    'Broccoli',
-    'Cabbage',
-    'Carrots',
-    'Dates',
-    'Donuts',
-    'Eggs',
-    'Fish',
-    'Flour',
-    'Garlic',
-    'Grapes',
-    'Ham',
-    'Honey',
-    'Ice cream',
-    'Jelly',
+    'EP1',
+    'EP2',
+    'EP3',
+    'EP4',
+    'EP5',
+    'EP6',
+    'EP7',
+    'EP8',
+    'EP9',
+    'EP10',
+    'EP11',
+    'EP111',
+    'EP22'
   ];
   public filteredItems = this.items;
+
+  public onSearchChange(searchText: string): void {
+    this.filteredItems = searchText
+      ? this.items.filter(
+        (name) => name.toLowerCase().indexOf(searchText.toLowerCase()) > -1
+      )
+      : this.filteredItems;
+    this.changeDetectorRef.detectChanges();
+  }
+
 
   public closeBasicModal() {
     this.addEditRuleSetForm.reset();
@@ -96,6 +107,10 @@ export class SampleModelComponent implements OnInit{
   }
 
   public launchBasicModal() {
+    // this.queries.value.logicalOperator.valueChanges.subscribe(
+    //   (value) => (if(value == 'None'))
+    // );
+
     this.basicModal.show().then(() => {
       console.log('shown called from consumer');
     });
@@ -109,34 +124,12 @@ export class SampleModelComponent implements OnInit{
     console.log('hidden');
   }
 
-  public updateQuery() {
-    for(let i of this.queries.value)
-    {
-      console.log(i.EPcode);
-      console.log(i.opeartor);
-      console.log(i.parameter);
-    }
-
-  }
 
   public updateSingleQuery(index:number){
 
     let updateIndex=index;
-    this.singleQuery= this.queries.value[index].EPcode+ this.queries.value[index].operator+ this.queries.value[index].parameter;
+    this.singleQuery= this.queries.value[index].EPcode+ this.queries.value[index].operator+'\''+ this.queries.value[index].parameter+'\'';
     this.singleQuery+=(this.queries.value[index].logicalOperator)?' '+this.queries.value[index].logicalOperator+' ':'';
-    // if(this.finalQueryArray.some(x=>x===this.singleQuery)){
-    //   updateIndex=this.finalQueryArray.indexOf(this.singleQuery);
-    //   console.log('updating single query at '+ updateIndex );
-    //   this.finalQueryArray[updateIndex]=this.singleQuery;
-    // }
-
-    // updateIndex=this.UpdateQueryIndex(index);
-    // if(updateIndex==index){
-    //   this.finalQueryArray.push(this.singleQuery);
-    // }
-    // else{
-    //   this.finalQueryArray[updateIndex]=this.singleQuery;
-    // }
     if(index>=this.queryIndexArray.length)
     {
       this.finalQueryArray.push(this.singleQuery);
@@ -152,19 +145,15 @@ export class SampleModelComponent implements OnInit{
     console.log(this.queryIndexArray);
   }
 
-  public UpdateQueryIndex(i:number):number{
-    let count=-1;
-    this.finalQueryArray.forEach((value,index) =>{
-      if(value.includes('(') || value.includes(')')){
-        console.log('found bracket')
-      }
-      else{
-        count++;
-        console.log('found query');
-      }
-      if(count == i) {i=index; return; }
-    });
-    return i;
+  public removeOrClearQuery(i: number) {
+    if (this.queries.length > 1) {
+      this.queries.removeAt(i)
+    } else {
+      this.queries.reset();
+      this.queryDivCounter=0;
+      this.finalQueryArray=[];
+      this.displayQuery();
+    }
   }
 
   public addOpenBracket(){
@@ -186,7 +175,12 @@ export class SampleModelComponent implements OnInit{
     this.finalQueryArray.pop();
     this.displayQuery();
   }
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   this.updateQuery();
-  // }
+
+  public selectEPcode(){
+    this.tempEP=this.multiSearchSelectFormGroup.controls['defaultSelect'].value;
+    // this.queries.value[index].EPcode = this.multiSearchSelectFormGroup.controls['defaultSelect'].value;
+
+  }
+ // ngOnChanges(changes: SimpleChanges): void {
+ //  }
 }

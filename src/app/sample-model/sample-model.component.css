@@ -22,8 +22,9 @@
   height: auto;
 }
 .queryField{
+  margin-top: 5px;
   float: left;
-  padding-left: 10px;
+  padding-left: 20px;
 }
 .queryField .brackets{
   width: 30px;height: 30px;
