@@ -1,4 +1,4 @@
-<coreui-modal (shown)="modalShown()" (hidden)="modalHidden()" modalWidth="90" [scrollable]="true" modalHeight="auto"  #basicModal>
+<coreui-modal (shown)="modalShown()" (hidden)="modalHidden()" modalWidth="90" [scrollable]="false" modalHeight="auto"  #basicModal>
   <ng-template #titleTemplate>
     {{title}}
   </ng-template>
@@ -38,10 +38,10 @@
     </div>
     <div style="display: block">
       <div class="col" style="width: 40%;height:auto;" >
-        <form class="Core-Form" [formGroup]="multiSearchSelectFormGroup">
+        <form class="Core-Form" [formGroup]="multiSearchSelectFormGroup" >
           <coreui-form-field>
-            <coreui-select placeholder="Select an option"  [searchable]="true" (searchValueChange)="onSearchChange($event)" ><!--(searchValueChange)="onSearchChange($event)"-->
-              <coreui-option *ngFor="let item of filteredItems" [value]="item">{{item}}</coreui-option>
+            <coreui-select id="EpcodeDropdown" placeholder="Select an option" #selectEPcode [searchable]="true" (searchValueChange)="onSearchChange($event)" (valueChange)="EPcodeUpdate($event)" ><!--(searchValueChange)="onSearchChange($event)"-->
+              <coreui-option *ngFor="let item of filteredItems" [value]="item">{{item}}  </coreui-option>
               <span *ngIf="filteredItems.length === 0" class="no-results">No results found...</span>
             </coreui-select>
           </coreui-form-field>
@@ -65,40 +65,36 @@
                     </coreui-form-field>
                   </coreui-checkbox-group>-->
                   <coreui-form-field class="queryField">
-                    <input coreUIInput formControlName="EPcode" placeholder="EP Code" style="width: 70px; padding:8px 2px 8px; text-align: center"  /> <!--[(ngModel)]="tempEP"-->
+                    <input coreUIInput id="EPcode" formControlName="EPcode" placeholder="EP Code" style="width: 70px; padding:8px 2px 8px; text-align: center"  (click)="clickonSearch(i)" readonly /> <!--[(ngModel)]="tempEP"-->
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField" >
-                    <coreui-select type="secondary" formControlName="operator" #microSelect style="margin-top: 5px">
+                    <coreui-select id="operator-sign" type="secondary" formControlName="operator" #microSelect style="margin-top: 5px">
                       <coreui-option *ngFor="let x of operatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField">
-                    <input coreUIInput  formControlName="parameter" placeholder="Parameter for Validation" style="width: 170px" />
+                    <input coreUIInput  formControlName="parameter" placeholder="Parameter for Validation" style="width: 168px" />
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField">
-                    <coreui-select  placeholder="Select" formControlName="logicalOperator" style="width: 70px; float: right;"  (ngModelChange)="addQueryFormGroup(i)">
+                    <coreui-select  placeholder="Logical Operator" formControlName="logicalOperator" style="width: 140px; float: right;"  (ngModelChange)="addQueryFormGroup(i)">
                       <coreui-option *ngFor="let x of logicalOperatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
                   <coreui-form-field class="queryField">
-                  <button type=button coreUIButton="icon" style="background-color: white " >
-                    <i coreUIIcon="approve" (click)="updateSingleQuery(i)"></i>
+                  <button type=button coreUIButton="icon" style="background-color: white; margin-top: 5px " >
+                    <i coreUIIcon="add" (click)="updateSingleQuery(i)"></i>
                   </button>
-                    <button type=button coreUIButton="icon" style="background-color: white; margin-left: 20px" >
-                      <i coreUIIcon="close" (click)="removeOrClearQuery(i)"></i>
+                  </coreui-form-field>
+                  <coreui-form-field class="queryField">
+                    <button *ngIf="i==queryDivCounter" type=button coreUIButton="icon" style="background-color: white; margin-left: 10px; margin-top: 5px" >
+                      <i coreUIIcon="collapse" (click)="removeOrClearQuery(i)"></i>
                     </button>
                   </coreui-form-field>
                 </form>
               </div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
             </div>
             </form>
           </div>
@@ -108,7 +104,7 @@
 
     <form class="Core-Form" [formGroup]="queryDisplayForm">
       <coreui-form-field>
-        <textarea rows="2" formControlName="query" [(ngModel)]="this.finalQuery" readonly style="width: 100%; margin-top: 10px; font-family: 'Courier New' " ></textarea>
+        <textarea rows="2" formControlName="query" [value]="this.finalQuery" readonly style="width: 100%; margin-top: 10px; " ></textarea>
       </coreui-form-field>
     </form>
 

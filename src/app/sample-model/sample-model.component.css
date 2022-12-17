@@ -19,7 +19,7 @@
 .vertical-scrollable div div{
   margin-bottom: 10px;
   width: 100%;
-  height: auto;
+  height: 40px;
 }
 .queryField{
   margin-top: 5px;
@@ -45,3 +45,6 @@
   border: none;
 }
 
+#EPcode{
+  background-color: white;
+}
