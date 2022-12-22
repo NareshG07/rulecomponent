@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 #operator-sign > button  {
   margin : 5px ;
+  width: 82px;
+  text-align: center;
 }
 
 /*coreui-panel.Core-Select-panel > div.Core-Panel-content.is-visible {*/

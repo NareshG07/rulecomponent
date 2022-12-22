@@ -12,6 +12,7 @@ import {ModalComponent} from "@epsilon/core-ui";
 import {FormBuilder, FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {query} from "@angular/animations";
 import {Papa} from "ngx-papaparse";
+import {Rule} from "../_models/Rule";
 
 @Component({
   selector: 'app-sample-model',
@@ -19,7 +20,7 @@ import {Papa} from "ngx-papaparse";
   styleUrls: ['./sample-model.component.css']
 })
 export class SampleModelComponent implements OnInit{
-  @ViewChild('basicModal', { static: true }) private basicModal!: ModalComponent;
+  @ViewChild('basicModal', { static: true }) private addEditRuleSetModal!: ModalComponent;
   @ViewChild('selectEPcode',{ read: ElementRef }) divClick!: ElementRef<HTMLElement>;
   title:String='Create Rule';
   public queryGenerateForm!: FormGroup;
@@ -31,8 +32,7 @@ export class SampleModelComponent implements OnInit{
   public queryDivCounter:number=0;
   public queryIndexArray:number[]=[];
   public indexValue:number=0;
-  public tempEP='';
-
+  public rule: Rule | undefined;
 
   constructor(private formBuilder: FormBuilder , private papa: Papa,
               private changeDetectorRef: ChangeDetectorRef) { }
@@ -48,7 +48,7 @@ export class SampleModelComponent implements OnInit{
     return new FormGroup({
       Checkbox : new FormControl(),
       EPcode   : new FormControl(),
-      operator : new FormControl(this.operatorValues[0]),
+      operator : new FormControl('='),
       parameter : new FormControl(),
       logicalOperator : new FormControl(),
       // removeQuery : new FormControl()
@@ -112,15 +112,29 @@ export class SampleModelComponent implements OnInit{
 
   public closeBasicModal() {
     this.addEditRuleSetForm.reset();
-    this.basicModal.hide().then(() => {
+    while(this.queryDivCounter>=0) {
+      this.removeOrClearQuery(this.queryDivCounter);
+      this.queryDivCounter--;
+    }
+    this.queryGenerateForm.reset();
+    this.multiSearchSelectFormGroup.reset();
+    this.finalQueryArray=[];
+    this.queryIndexArray=[];
+    this.queries.at(0).get('operator').setValue('=');
+    this.displayQuery();
+    this.addEditRuleSetModal.hide().then(() => {
       console.log('hidden called from consumer');
     });
   }
 
-  public launchBasicModal() {
-    this.basicModal.show().then(() => {
-      console.log('shown called from consumer');
-    });
+  public show() {
+    if(!this.rule)
+    {
+      this.queryDivCounter=0;
+      this.addEditRuleSetModal.show().then(() => {
+        console.log('shown called from consumer');
+      });
+    }
   }
 
   public modalShown() {
@@ -135,7 +149,7 @@ export class SampleModelComponent implements OnInit{
   public updateSingleQuery(index:number){
     console.log('In updateSingleQuery');
     let updateIndex=index;
-    this.singleQuery= this.queries.value[index].EPcode+ this.queries.value[index].operator+'\''+ this.queries.value[index].parameter+'\'';
+    this.singleQuery= this.queries.value[index].EPcode+' '+ this.queries.value[index].operator+' '+'\''+ this.queries.value[index].parameter+'\'';
     this.singleQuery+=(this.queries.value[index].logicalOperator && this.queries.value[index].logicalOperator!='NONE')?' '+this.queries.value[index].logicalOperator+' ':'';
     if(index>=this.queryIndexArray.length)
     {
@@ -148,19 +162,21 @@ export class SampleModelComponent implements OnInit{
     }
     // this.queries.value[index].removeQuery.disable(true);
     this.displayQuery();
-    this.singleQuery='';
   }
 
   public removeOrClearQuery(i: number) {
     if (this.queries.length > 1) {
-      this.queries.removeAt(i)
-      this.finalQueryArray[this.queryIndexArray[i]]='';
+      this.queries.removeAt(i);
+      this.finalQueryArray.splice(this.queryIndexArray[i],1);
+      this.queryIndexArray.splice(i,1);
       this.queryDivCounter--;
     } else {
       this.queryGenerateForm.reset();
       this.queryDivCounter=0;
       this.finalQueryArray=[];
+      this.queryIndexArray=[];
       this.queries.removeAt(1);
+      this.queries.at(0).get('operator').setValue('=');
     }
     this.displayQuery();
 
@@ -186,16 +202,15 @@ export class SampleModelComponent implements OnInit{
   }
 
   public EPcodeUpdate(value:string){
-    this.tempEP=value;
-    this.queries.at(this.indexValue).get('EPcode').setValue(value)
+    this.queries.at(this.indexValue).get('EPcode').setValue(value);
   }
 
-  public clickonSearch(i:number){
+  public clickonEPcode(i:number){
       document.getElementById('EpcodeDropdown')
         ?.getElementsByTagName("button")[0]
         ?.dispatchEvent(new MouseEvent('mousedown', {shiftKey: true}));
       this.indexValue=i;
-      console.log('clicked on Search')
+      this.multiSearchSelectFormGroup.get('selectDefault')?.setValue(this.queries.at(this.indexValue).get('EPcode').value);
   }
 
 }
