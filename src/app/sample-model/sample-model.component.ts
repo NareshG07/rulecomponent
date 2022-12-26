@@ -38,7 +38,8 @@ export class SampleModelComponent implements OnInit{
   public setOperatorIndexArray:number[]=[];
   public ruleCondition:string = '';
   public setOperatorCondition:boolean = false;
-  public rule: Rule = new Rule("( EP1 = 'Y' OR EP2 = 'Y' OR EP3 = 'Y' )");
+  public isFromExistingRule : boolean =false;
+  public rule: Rule = new Rule("( ( EP1091 <= '4000' AND EP1091 >= '3001' ) OR ( EP1087 <= '4000' AND EP1087 >= '3001' ) OR ( EP1085 <= '4000' AND EP1085 >= '3001' ) OR ( EP1083 <= '4000' AND EP1083 >= '3001' ) OR ( EP1082 <= '4000' AND EP1082 >= '3001' ) OR ( EP1089 <= '4000' AND EP1089 >= '3001' ) )");
 
   constructor(private formBuilder: FormBuilder , private papa: Papa,
               private changeDetectorRef: ChangeDetectorRef) { }
@@ -63,7 +64,7 @@ export class SampleModelComponent implements OnInit{
   }
 
   public addQueryFormGroup(i:number) {
-    if(this.title=='Edit Rule' && i==this.ruleDivCounter){
+    if(this.isFromExistingRule && i==this.ruleDivCounter){
       this.rules.push(this.createQueryFormGroup());
       this.ruleDivCounter++;
       return;
@@ -162,6 +163,7 @@ export class SampleModelComponent implements OnInit{
     }
     else{
       this.title='Edit Rule';
+      this.isFromExistingRule=true;
       this.ruleDivCounter=0;
       this.finalRuleArray=this.rule.humanReadableRule.split(/(?=E)|(?=\sOR)|(?=\sAND)|(?=\()|(?=\s\))/);
       console.log(this.finalRuleArray);
@@ -171,23 +173,6 @@ export class SampleModelComponent implements OnInit{
         if(ele.includes('EP'))
           this.ruleIndexArray.push(i);
       })
-      // this.finalRuleArray.forEach((ele, i) => {
-      //   if (ele.includes("EP")) {
-      //     ele = ele.trim(); this.ruleIndexArray.push(i);
-      //   }
-      //
-      //   if(ele.includes('AND') || ele.includes('OR')){
-      //     ele= ' '+ele;
-      //     this.setOperatorIndexArray.push(i)
-      //   }
-      //   this.finalRuleArray[i] = ele;
-      //   console.log(ele)
-      // });
-      // this.displayQuery();
-      // console.log(this.finalRuleArray);
-      // console.log(this.ruleIndexArray);
-      // console.log(this.setOperatorIndexArray);
-      // console.log("before call")
       this.displayQuery();
       this.createRuleInputFields(this.finalRuleArray)
 
@@ -217,6 +202,7 @@ export class SampleModelComponent implements OnInit{
       this.rules.at(i).get('logicalOperator').enable();
       if(this.setOperatorIndexArray[i])
       this.rules.at(i).get('logicalOperator').setValue(this.finalRuleArray[this.setOperatorIndexArray[i]].trim());
+      if(i==this.rules.length-1) this.isFromExistingRule = false;
     }
   }
 
