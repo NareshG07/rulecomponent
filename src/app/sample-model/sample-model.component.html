@@ -69,7 +69,7 @@
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField" >
-                    <coreui-select id="operator-sign" type="secondary" formControlName="operator" #microSelect >
+                    <coreui-select id="operator-sign" type="secondary" formControlName="operator" #microSelect>
                       <coreui-option *ngFor="let x of operatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
@@ -79,20 +79,22 @@
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField">
+                    <button type=button coreUIButton="icon" style="background-color: white; margin-top: 5px " >
+                      <i coreUIIcon="add" (click)="updateSingleRule(i)"></i>
+                    </button>
+                  </coreui-form-field>
+                  <coreui-form-field class="queryField">
+                    <button *ngIf="i==ruleDivCounter" type=button coreUIButton="icon" style="background-color: white; margin-left: 10px; margin-top: 5px" >
+                      <i coreUIIcon="collapse" (click)="removeOrClearQuery(i)"></i>
+                    </button>
+                  </coreui-form-field>
+
+                  <coreui-form-field class="queryField">
                     <coreui-select  placeholder="Logical Operator" formControlName="logicalOperator" style="width: 140px; float: right;"  (ngModelChange)="addQueryFormGroup(i)">
                       <coreui-option *ngFor="let x of logicalOperatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
-                  <coreui-form-field class="queryField">
-                  <button type=button coreUIButton="icon" style="background-color: white; margin-top: 5px " >
-                    <i coreUIIcon="add" (click)="updateSingleQuery(i)"></i>
-                  </button>
-                  </coreui-form-field>
-                  <coreui-form-field class="queryField">
-                    <button *ngIf="i==queryDivCounter" type=button coreUIButton="icon" style="background-color: white; margin-left: 10px; margin-top: 5px" >
-                      <i coreUIIcon="collapse" (click)="removeOrClearQuery(i)"></i>
-                    </button>
-                  </coreui-form-field>
+
                 </form>
               </div>
             </div>
@@ -104,7 +106,7 @@
 
     <form class="Core-Form" [formGroup]="queryDisplayForm">
       <coreui-form-field>
-        <textarea rows="2" formControlName="query" [value]="this.finalQuery" readonly style="width: 100%; margin-top: 10px; " ></textarea>
+        <textarea rows="2" formControlName="query" [value]="this.finalRule" readonly style="width: 100%; margin-top: 10px; " ></textarea>
       </coreui-form-field>
     </form>
 

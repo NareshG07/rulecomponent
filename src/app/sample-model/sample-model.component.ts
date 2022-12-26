@@ -13,6 +13,8 @@ import {FormBuilder, FormArray, FormControl, FormGroup, Validators} from "@angul
 import {query} from "@angular/animations";
 import {Papa} from "ngx-papaparse";
 import {Rule} from "../_models/Rule";
+import {isEmpty} from "rxjs";
+import {forEach} from "angular";
 
 @Component({
   selector: 'app-sample-model',
@@ -24,24 +26,29 @@ export class SampleModelComponent implements OnInit{
   @ViewChild('selectEPcode',{ read: ElementRef }) divClick!: ElementRef<HTMLElement>;
   title:String='Create Rule';
   public queryGenerateForm!: FormGroup;
-  public queries:any;
+  public rules:any;
   public operatorValues:string[] = ['=','!=','<=','>=','Contains'];
   public logicalOperatorValues:string[]=['AND','OR','NONE'];
-  public finalQueryArray: string[]=[];
-  public finalQuery:string='';
-  public queryDivCounter:number=0;
-  public queryIndexArray:number[]=[];
+  public finalRuleArray: string[]=[];
+  public finalRule:string='';
+  public ruleDivCounter:number=0;
+  public ruleIndexArray:number[]=[];
   public indexValue:number=0;
-  public rule: Rule | undefined;
+  // public rule: Rule | undefined;
+  public setOperatorIndexArray:number[]=[];
+  public ruleCondition:string = '';
+  public setOperatorCondition:boolean = false;
+  public rule: Rule = new Rule("( EP1 = 'Y' OR EP2 = 'Y' OR EP3 = 'Y' )");
 
   constructor(private formBuilder: FormBuilder , private papa: Papa,
               private changeDetectorRef: ChangeDetectorRef) { }
+
 
   ngOnInit() {
     this.queryGenerateForm = this.formBuilder.group({
       queries: this.formBuilder.array([this.createQueryFormGroup()])
     });
-    this.queries = this.queryGenerateForm.get('queries') as FormArray;
+    this.rules = this.queryGenerateForm.get('queries') as FormArray;
   }
 
   private createQueryFormGroup(): FormGroup {
@@ -50,18 +57,34 @@ export class SampleModelComponent implements OnInit{
       EPcode   : new FormControl(),
       operator : new FormControl('='),
       parameter : new FormControl(),
-      logicalOperator : new FormControl(),
+      logicalOperator : new FormControl({value:null,disabled:true}),
       // removeQuery : new FormControl()
     })
   }
 
   public addQueryFormGroup(i:number) {
-    if(this.queries.value[i].logicalOperator=='NONE') return;
-    if(i==this.queryDivCounter){
-      this.queries.push(this.createQueryFormGroup());
-      this.queryDivCounter++;
+    if(this.title=='Edit Rule' && i==this.ruleDivCounter){
+      this.rules.push(this.createQueryFormGroup());
+      this.ruleDivCounter++;
+      return;
     }
+        if (i >= 0 && this.rules.value[i].logicalOperator == 'NONE') {
+        this.finalRuleArray[this.setOperatorIndexArray[i]] = "";
+        // this.finalRuleArray.splice(this.setOperatorIndexArray[i],1);
+        // this.setOperatorIndexArray.splice(i,1);
+        this.displayQuery();
+        return;
+      }
 
+      if (i == this.ruleDivCounter && this.setOperatorIndexArray[i] == null) {
+        this.rules.push(this.createQueryFormGroup());
+        this.ruleDivCounter++;
+        this.finalRuleArray.push(' ' + this.rules.value[i].logicalOperator + ' ');
+        this.setOperatorIndexArray.push(this.finalRuleArray.length - 1)
+      } else if(this.rules.value[i].logicalOperator) {
+        this.finalRuleArray[this.setOperatorIndexArray[i]] = ' ' + this.rules.value[i].logicalOperator + ' ';
+      }
+    this.displayQuery();
   }
 
   get queryArray(): FormArray {
@@ -82,7 +105,7 @@ export class SampleModelComponent implements OnInit{
         Validators.required
       ])}
   )
-  public singleQuery:string = '';
+
   private items = [
     'EP1',
     'EP2',
@@ -112,15 +135,16 @@ export class SampleModelComponent implements OnInit{
 
   public closeBasicModal() {
     this.addEditRuleSetForm.reset();
-    while(this.queryDivCounter>=0) {
-      this.removeOrClearQuery(this.queryDivCounter);
-      this.queryDivCounter--;
+    while(this.ruleDivCounter>=0) {
+      this.removeOrClearQuery(this.ruleDivCounter);
+      this.ruleDivCounter--;
     }
     this.queryGenerateForm.reset();
     this.multiSearchSelectFormGroup.reset();
-    this.finalQueryArray=[];
-    this.queryIndexArray=[];
-    this.queries.at(0).get('operator').setValue('=');
+    this.finalRuleArray=[];
+    this.ruleIndexArray=[];
+    this.setOperatorIndexArray=[];
+    this.rules.at(0).get('operator').setValue('=');
     this.displayQuery();
     this.addEditRuleSetModal.hide().then(() => {
       console.log('hidden called from consumer');
@@ -130,12 +154,72 @@ export class SampleModelComponent implements OnInit{
   public show() {
     if(!this.rule)
     {
-      this.queryDivCounter=0;
+      this.title='Create Rule';
+      this.ruleDivCounter=0;
+      this.addEditRuleSetModal.show().then(() => {
+        console.log('shown called from consumer');
+      });
+    }
+    else{
+      this.title='Edit Rule';
+      this.ruleDivCounter=0;
+      this.finalRuleArray=this.rule.humanReadableRule.split(/(?=E)|(?=\sOR)|(?=\sAND)|(?=\()|(?=\s\))/);
+      console.log(this.finalRuleArray);
+      this.finalRuleArray.forEach((ele,i) => {
+        if(ele.includes('AND') || ele.includes('OR'))
+          this.setOperatorIndexArray.push(i);
+        if(ele.includes('EP'))
+          this.ruleIndexArray.push(i);
+      })
+      // this.finalRuleArray.forEach((ele, i) => {
+      //   if (ele.includes("EP")) {
+      //     ele = ele.trim(); this.ruleIndexArray.push(i);
+      //   }
+      //
+      //   if(ele.includes('AND') || ele.includes('OR')){
+      //     ele= ' '+ele;
+      //     this.setOperatorIndexArray.push(i)
+      //   }
+      //   this.finalRuleArray[i] = ele;
+      //   console.log(ele)
+      // });
+      // this.displayQuery();
+      // console.log(this.finalRuleArray);
+      // console.log(this.ruleIndexArray);
+      // console.log(this.setOperatorIndexArray);
+      // console.log("before call")
+      this.displayQuery();
+      this.createRuleInputFields(this.finalRuleArray)
+
       this.addEditRuleSetModal.show().then(() => {
         console.log('shown called from consumer');
       });
     }
   }
+
+  public createRuleInputFields(ruleArray:String[]){
+    let reqArr = ruleArray.filter(ele => ele.includes("EP"))
+    console.log(reqArr)
+    reqArr.forEach((ele, i) => {
+      if(i>=1) this.addQueryFormGroup(i-1)
+    });
+    let abc = reqArr.map(ele =>{
+      return ele.trim().split(" ").filter(x => !x.match(/[\(\)]/))
+    })
+    console.log(abc)
+    console.log(this.setOperatorIndexArray)
+    console.log(this.rules)
+    for(let i=0; i<this.rules.length; i++){
+      console.log(abc[i][0]);
+      this.rules.at(i).get('EPcode').setValue(abc[i][0])
+      this.rules.at(i).get('operator').setValue(abc[i][1])
+      this.rules.at(i).get('parameter').setValue(abc[i][2].slice(1,-1))
+      this.rules.at(i).get('logicalOperator').enable();
+      if(this.setOperatorIndexArray[i])
+      this.rules.at(i).get('logicalOperator').setValue(this.finalRuleArray[this.setOperatorIndexArray[i]].trim());
+    }
+  }
+
 
   public modalShown() {
     console.log('shown');
@@ -146,63 +230,72 @@ export class SampleModelComponent implements OnInit{
   }
 
 
-  public updateSingleQuery(index:number){
+  public updateSingleRule(index:number){
     console.log('In updateSingleQuery');
     let updateIndex=index;
-    this.singleQuery= this.queries.value[index].EPcode+' '+ this.queries.value[index].operator+' '+'\''+ this.queries.value[index].parameter+'\'';
-    this.singleQuery+=(this.queries.value[index].logicalOperator && this.queries.value[index].logicalOperator!='NONE')?' '+this.queries.value[index].logicalOperator+' ':'';
-    if(index>=this.queryIndexArray.length)
+    this.ruleCondition= this.rules.value[index].EPcode+' '+ this.rules.value[index].operator+' '+'\''+ this.rules.value[index].parameter+'\'';
+    // this.ruleConditionSetOperator=(this.queries.value[index].logicalOperator && this.queries.value[index].logicalOperator!='NONE')?' '+this.queries.value[index].logicalOperator+' ':'';
+    if(index>=this.ruleIndexArray.length)
     {
-      this.finalQueryArray.push(this.singleQuery);
-      this.queryIndexArray.push(this.finalQueryArray.length-1);
+      this.finalRuleArray.push(this.ruleCondition);
+      // this.finalQueryArray.push(this.ruleConditionSetOperator);
+      this.ruleIndexArray.push(this.finalRuleArray.length-1);
     }
     else{
-      updateIndex=this.queryIndexArray[index];
-      this.finalQueryArray[updateIndex]=this.singleQuery;
+      updateIndex=this.ruleIndexArray[index];
+      this.finalRuleArray[updateIndex]=this.ruleCondition;
     }
-    // this.queries.value[index].removeQuery.disable(true);
+    this.rules.at(index).get('logicalOperator').enable();
     this.displayQuery();
   }
 
   public removeOrClearQuery(i: number) {
-    if (this.queries.length > 1) {
-      this.queries.removeAt(i);
-      this.finalQueryArray.splice(this.queryIndexArray[i],1);
-      this.queryIndexArray.splice(i,1);
-      this.queryDivCounter--;
+    if (this.rules.length > 1) {
+      this.rules.removeAt(i);
+      if(this.setOperatorIndexArray[i]){
+        this.finalRuleArray.splice(this.setOperatorIndexArray[i],1);
+        this.setOperatorIndexArray.splice(i,1);
+      }
+      if(this.ruleIndexArray[i]){
+        this.finalRuleArray.splice(this.ruleIndexArray[i],1);
+        this.ruleIndexArray.splice(i,1);
+      }
+
+      this.ruleDivCounter--;
     } else {
       this.queryGenerateForm.reset();
-      this.queryDivCounter=0;
-      this.finalQueryArray=[];
-      this.queryIndexArray=[];
-      this.queries.removeAt(1);
-      this.queries.at(0).get('operator').setValue('=');
+      this.ruleDivCounter=0;
+      this.finalRuleArray=[];
+      this.ruleIndexArray=[];
+      this.setOperatorIndexArray=[];
+      this.rules.removeAt(1);
+      this.rules.at(0).get('operator').setValue('=');
     }
     this.displayQuery();
 
   }
 
   public addOpenBracket(){
-    this.finalQueryArray.push('( ');
+    this.finalRuleArray.push('( ');
     this.displayQuery();
   }
   public addCloseBracket(){
-    this.finalQueryArray.push(' )');
+    this.finalRuleArray.push(' )');
     this.displayQuery();
   }
 
   public displayQuery(){
-    this.finalQuery = this.finalQueryArray.join('');
+    this.finalRule = this.finalRuleArray.join('');
   }
 
   public deleteBracket(){
-    if(this.finalQueryArray[this.finalQueryArray.length-1]=='( ' || this.finalQueryArray[this.finalQueryArray.length-1]==' )' )
-    this.finalQueryArray.pop();
+    if(this.finalRuleArray[this.finalRuleArray.length-1]=='( ' || this.finalRuleArray[this.finalRuleArray.length-1].includes(')') )
+    this.finalRuleArray.pop();
     this.displayQuery();
   }
 
   public EPcodeUpdate(value:string){
-    this.queries.at(this.indexValue).get('EPcode').setValue(value);
+    this.rules.at(this.indexValue).get('EPcode').setValue(value);
   }
 
   public clickonEPcode(i:number){
@@ -210,7 +303,7 @@ export class SampleModelComponent implements OnInit{
         ?.getElementsByTagName("button")[0]
         ?.dispatchEvent(new MouseEvent('mousedown', {shiftKey: true}));
       this.indexValue=i;
-      this.multiSearchSelectFormGroup.get('selectDefault')?.setValue(this.queries.at(this.indexValue).get('EPcode').value);
+      this.multiSearchSelectFormGroup.get('selectDefault')?.setValue(this.rules.at(this.indexValue).get('EPcode').value);
   }
 
 }
