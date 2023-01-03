@@ -1,9 +1,9 @@
-<coreui-modal (shown)="modalShown()" (hidden)="modalHidden()" modalWidth="90" [scrollable]="false" modalHeight="auto"  #basicModal>
-  <ng-template #titleTemplate>
+<coreui-modal modalWidth="90" [scrollable]="false" #addEditRuleSetModal>
+  <ng-template #titleTemplate >
     {{title}}
   </ng-template>
   <ng-template #titleCloseButtonTemplate>
-    <button type="button" (click)="closeBasicModal()" coreUIButton="icon-large"><i coreUIIcon="close"></i></button>
+    <button type="button" (click)="hide()" coreUIButton="icon-large"><i coreUIIcon="close"></i></button>
   </ng-template>
   <ng-template #contentTemplate>
     <form class="Core-Form" [formGroup]="addEditRuleSetForm">
@@ -18,26 +18,26 @@
     <div style="float: right">
     <coreui-form-field class="queryField" >
       <button type=button coreUIButton="icon" >
-        <i coreUIIcon="add" (click)="addOpenBracket()"></i>
+        <i coreUIIcon="add" (click)="addOpenParenthesis()"></i>
       </button>
       <input coreUIInput class="brackets" placeholder="(" readonly coreUIFixedWidth="extraShort" >
       <button type=button coreUIButton="icon">
-        <i coreUIIcon="collapse" (click)="deleteBracket()"></i>
+        <i coreUIIcon="collapse" (click)="deleteParenthesis()"></i>
       </button>
     </coreui-form-field>
     <coreui-form-field class="queryField">
       <button type=button coreUIButton="icon" style="margin-left: 15px" >
-        <i coreUIIcon="add" (click)="addCloseBracket()" ></i>
+        <i coreUIIcon="add" (click)="addClosedParenthesis()" ></i>
       </button>
       <input coreUIInput  class="brackets" placeholder=")" readonly coreUIFixedWidth="extraShort" >
       <button type=button coreUIButton="icon">
-        <i coreUIIcon="collapse" (click)="deleteBracket()" ></i>
+        <i coreUIIcon="collapse" (click)="deleteParenthesis()" ></i>
       </button>
     </coreui-form-field>
     </div>
     </div>
     <div style="display: block">
-      <div class="col" style="width: 35%;height:auto;" >
+      <div id="SelectEPCode" class="col" style="width: 35%;height:auto;" >
         <form class="Core-Form" [formGroup]="multiSearchSelectFormGroup" >
           <coreui-form-field>
             <coreui-select id="EpcodeDropdown" formControlName="selectDefault"  placeholder="Select an option" #selectEPcode [searchable]="true" (searchValueChange)="onSearchChange($event)" (valueChange)="EPcodeUpdate($event)" >
@@ -53,7 +53,7 @@
           <!-- Container that scrolls -->
           <div coreUIScrollIndicatorTarget class="vertical-scrollable">
             <!-- Container that grows -->
-            <form class="basic-container" [formGroup]="queryGenerateForm">
+            <form class="basic-container" [formGroup]="ruleGenerateForm">
             <div formArrayName="queries">
               <!--------------        query:1 ------------------>
               <div  *ngFor="let query of queryArray.controls; let i = index"
@@ -85,7 +85,7 @@
                   </coreui-form-field>
                   <coreui-form-field class="queryField">
                     <button *ngIf="i==ruleDivCounter" type=button coreUIButton="icon" style="background-color: white; margin-left: 10px; margin-top: 5px" >
-                      <i coreUIIcon="collapse" (click)="removeOrClearQuery(i)"></i>
+                      <i coreUIIcon="collapse" (click)="removeOrClearRule(i)"></i>
                     </button>
                   </coreui-form-field>
 
@@ -113,8 +113,8 @@
 
   </ng-template>
   <ng-template #buttonsTemplate>
-    <button coreUIButton="secondary" (click)="closeBasicModal()">Cancel</button>
-    <button coreUIButton (click)="closeBasicModal()">Submit</button>
+    <button coreUIButton="secondary" (click)="hide()">Cancel</button>
+    <button coreUIButton (click)="hide()">Submit</button>
   </ng-template>
 </coreui-modal>
 
