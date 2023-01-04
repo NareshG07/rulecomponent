@@ -54,9 +54,9 @@
           <div coreUIScrollIndicatorTarget class="vertical-scrollable">
             <!-- Container that grows -->
             <form class="basic-container" [formGroup]="ruleGenerateForm">
-            <div formArrayName="queries">
+            <div formArrayName="rules">
               <!--------------        query:1 ------------------>
-              <div  *ngFor="let query of queryArray.controls; let i = index"
+              <div  *ngFor="let rule of ruleArray.controls; let i = index"
                     [formGroupName]="i">
                 <form class="Core-Form" style="width:100%">
 <!--                  <coreui-checkbox-group  class="queryField" orientation="horizontal">
@@ -65,7 +65,7 @@
                     </coreui-form-field>
                   </coreui-checkbox-group>-->
                   <coreui-form-field class="queryField">
-                    <input coreUIInput id="EPcode" formControlName="EPcode" placeholder="EP Code" style="width: 70px; padding:8px 2px 8px; text-align: center; border: 1px solid" (click)="clickonEPcode(i)"/> <!--[(ngModel)]="tempEP"-->
+                    <input coreUIInput id="EPcode" formControlName="epCode" placeholder="EP Code" style="width: 70px; padding:8px 2px 8px; text-align: center; border: 1px solid" (click)="clickonEPcode(i)"/> <!--[(ngModel)]="tempEP"-->
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField" >
@@ -90,7 +90,7 @@
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField">
-                    <coreui-select  placeholder="Logical Operator" formControlName="logicalOperator" style="width: 140px; float: right;"  (ngModelChange)="addQueryFormGroup(i)">
+                    <coreui-select  placeholder="Logical Operator" formControlName="logicalOperator" style="width: 140px; float: right;"  (ngModelChange)="addRuleFormGroup(i)">
                       <coreui-option *ngFor="let x of logicalOperatorValues" [value]="x">{{x}}</coreui-option>
                     </coreui-select>
                   </coreui-form-field>
@@ -104,9 +104,9 @@
       </div>
     </div>
 
-    <form class="Core-Form" [formGroup]="queryDisplayForm">
+    <form class="Core-Form" [formGroup]="addEditRuleSetForm">
       <coreui-form-field>
-        <textarea rows="2" formControlName="query" [value]="this.finalRule" readonly style="width: 100%; margin-top: 10px; " ></textarea>
+        <textarea rows="2" formControlName="query" readonly style="width: 100%; margin-top: 10px; " ></textarea>
       </coreui-form-field>
     </form>
 

@@ -24,7 +24,6 @@ import {forEach} from "angular";
 export class SampleModelComponent implements OnInit{
   @ViewChild('addEditRuleSetModal', { static: true }) private addEditRuleSetModal!: ModalComponent;
   title:String='Create Rule';
-  public ruleGenerateForm!: FormGroup;
   public rules:any;
   public operatorValues:string[] = ['=','!=','<=','>=','Contains'];
   public logicalOperatorValues:string[]=['AND','OR','NONE'];
@@ -37,6 +36,7 @@ export class SampleModelComponent implements OnInit{
   public setOperatorIndexArray:number[]=[];
   public ruleCondition:string = '';
   public isFromExistingRule : boolean =false;
+  public setOperatorDropdownValue:string='';
 
   public rule: Rule | undefined;
   // public rule:Rule = new Rule( "EP1 = 'Y' OR ( EP2 = 'Y' AND EP3 = 'Y' )" )
@@ -61,16 +61,12 @@ export class SampleModelComponent implements OnInit{
   ];
   public filteredItems = this.items;
 
-  constructor(private formBuilder: FormBuilder , private papa: Papa,
+  constructor(private fb: FormBuilder , private papa: Papa,
               private changeDetectorRef: ChangeDetectorRef) { }
 
 
   ngOnInit() {
-    this.ruleGenerateForm = this.formBuilder.group({
-      queries: this.formBuilder.array([this.createRuleFormGroup()])
-    });
-    this.rules = this.ruleGenerateForm.get('queries') as FormArray;
-    console.log(this.rules)
+  this.rules=this.ruleArray;
   }
 
 
@@ -79,28 +75,40 @@ export class SampleModelComponent implements OnInit{
   });
 
   addEditRuleSetForm = new FormGroup({
-    value: new FormControl('', [Validators.required])
+    value: new FormControl('', [Validators.required]),
+    query: new FormControl('', [
+      Validators.required
+    ])
   });
 
+  public ruleGenerateForm = new FormGroup({
+    'rules': new FormArray([
+      this.fb.group({
+        epCode:new FormControl(),
+        operator:new FormControl(),
+        parameter:new FormControl(),
+        logicalOperator : new FormControl()
+      })
+    ])
+  })
 
-  public queryDisplayForm = new FormGroup(
-    {
-      query: new FormControl('', [
-        Validators.required
-      ])}
-  )
+
+  // public queryDisplayForm = new FormGroup(
+  //   {
+  //
+  // )
 
   private createRuleFormGroup(): FormGroup {
-    return new FormGroup({
-      EPcode   : new FormControl(),
+    return this.fb.group({
+      epCode   : new FormControl(),
       operator : new FormControl(),
       parameter : new FormControl(),
       logicalOperator : new FormControl(),
     })
   }
 
-  get queryArray(): FormArray {
-    return <FormArray> this.ruleGenerateForm.get('queries');
+  get ruleArray(): FormArray {
+    return this.ruleGenerateForm.get('rules') as FormArray;
   }
 
 
@@ -163,7 +171,7 @@ export class SampleModelComponent implements OnInit{
     console.log(this.rules);
   }
 
-  public addQueryFormGroup(i:number) {
+  public addRuleFormGroup(i:number) {
     if(this.isFromExistingRule && i==this.ruleDivCounter){
       this.rules.push(this.createRuleFormGroup());
       this.ruleDivCounter++;
@@ -192,7 +200,7 @@ export class SampleModelComponent implements OnInit{
     let reqArr = ruleArray.filter(ele => ele.includes("EP"))
     console.log(reqArr)
     reqArr.forEach((ele, i) => {
-      if(i>=1) this.addQueryFormGroup(i-1)
+      if(i>=1) this.addRuleFormGroup(i-1)
     });
     let abc = reqArr.map(ele =>{
       return ele.trim().split(" ").filter(x => !x.match(/[\(\)]/))
@@ -202,7 +210,7 @@ export class SampleModelComponent implements OnInit{
     console.log(this.rules)
     for(let i=0; i<this.rules.length; i++){
       console.log(abc[i][0]);
-      this.rules.at(i).get('EPcode').setValue(abc[i][0])
+      this.rules.at(i).get('epCode').setValue(abc[i][0])
       this.rules.at(i).get('operator').setValue(abc[i][1])
       this.rules.at(i).get('parameter').setValue(abc[i][2].slice(1,-1))
       this.rules.at(i).get('logicalOperator').enable();
@@ -225,7 +233,7 @@ export class SampleModelComponent implements OnInit{
   public updateSingleRule(index:number){
     console.log('In updateSingleQuery');
     let updateIndex=index;
-    this.ruleCondition= this.rules.at(index).get('EPcode').value+' '+ this.rules.at(index).get('operator').value+' '+'\''+ this.rules.at(index).get('parameter').value+'\'';
+    this.ruleCondition= this.rules.at(index).get('epCode').value+' '+ this.rules.at(index).get('operator').value+' '+'\''+ this.rules.at(index).get('parameter').value+'\'';
     // this.ruleCondition= this.rules.value[index].EPcode+' '+ this.rules.value[index].operator+' '+'\''+ this.rules.value[index].parameter+'\'';
     // this.ruleConditionSetOperator=(this.queries.value[index].logicalOperator && this.queries.value[index].logicalOperator!='NONE')?' '+this.queries.value[index].logicalOperator+' ':'';
     if(index>=this.ruleIndexArray.length)
@@ -269,7 +277,7 @@ export class SampleModelComponent implements OnInit{
   public EPcodeUpdate(value:string){
     if(typeof value=='string'){
       let tempStr=value.split("-");
-      this.rules.at(this.indexValue).get('EPcode').setValue(tempStr[0].trim());
+      this.rules.at(this.indexValue).get('epCode').setValue(tempStr[0].trim());
     }
   }
 
@@ -278,11 +286,12 @@ export class SampleModelComponent implements OnInit{
       ?.getElementsByTagName("button")[0]
       ?.dispatchEvent(new MouseEvent('mousedown', {shiftKey: true}));
     this.indexValue=i;
-    this.multiSearchSelectFormGroup.get('selectDefault')?.setValue(this.rules.at(this.indexValue).get('EPcode').value);
+    this.multiSearchSelectFormGroup.get('selectDefault')?.setValue(this.rules.at(this.indexValue).get('epCode').value);
   }
 
   public displayRule(){
     this.finalRule = this.finalRuleArray.join('');
+    this.addEditRuleSetForm.get('query')?.setValue(this.finalRule);
   }
 
   public addOpenParenthesis(){
