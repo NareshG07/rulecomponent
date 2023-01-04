@@ -37,8 +37,12 @@ export class SampleModelComponent implements OnInit{
   public setOperatorIndexArray:number[]=[];
   public ruleCondition:string = '';
   public isFromExistingRule : boolean =false;
+
   public rule: Rule | undefined;
+  // public rule:Rule = new Rule( "EP1 = 'Y' OR ( EP2 = 'Y' AND EP3 = 'Y' )" )
   // public rule: Rule = new Rule("( EP2693 >= '1' OR EP2699 >= '1' OR EP2708 >= '1' OR EP2711 >= '1' OR EP2717 >= '1' OR EP2723 >= '1' OR EP2732 >= '1' )");
+  // public rule:Rule = new Rule("( ( EP1091 <= '4000' AND EP1091 >= '3001' ) OR ( EP1087 <= '4000' AND EP1087 >= '3001' ) OR ( EP1085 <= '4000' AND EP1085 >= '3001' ) OR ( EP1083 <= '4000' AND EP1083 >= '3001' ) OR ( EP1082 <= '4000' AND EP1082 >= '3001' ) OR ( EP1089 <= '4000' AND EP1089 >= '3001' ) )");
+
 
   private items = [
     'EP1 - Offline Name',
@@ -52,8 +56,8 @@ export class SampleModelComponent implements OnInit{
     'EP9 - Offline Name',
     'EP10 - Offline Name',
     'EP11 - Offline Name',
-    'EP111 - Online Name',
-    'EP22 - Online Name'
+    'EP111 - Offline Name',
+    'EP22 - Offline Name'
   ];
   public filteredItems = this.items;
 
@@ -63,7 +67,7 @@ export class SampleModelComponent implements OnInit{
 
   ngOnInit() {
     this.ruleGenerateForm = this.formBuilder.group({
-      queries: this.formBuilder.array([this.createQueryFormGroup()])
+      queries: this.formBuilder.array([this.createRuleFormGroup()])
     });
     this.rules = this.ruleGenerateForm.get('queries') as FormArray;
     console.log(this.rules)
@@ -86,12 +90,12 @@ export class SampleModelComponent implements OnInit{
       ])}
   )
 
-  private createQueryFormGroup(): FormGroup {
+  private createRuleFormGroup(): FormGroup {
     return new FormGroup({
       EPcode   : new FormControl(),
-      operator : new FormControl('='),
+      operator : new FormControl(),
       parameter : new FormControl(),
-      logicalOperator : new FormControl({value:null,disabled:true}),
+      logicalOperator : new FormControl(),
     })
   }
 
@@ -161,7 +165,7 @@ export class SampleModelComponent implements OnInit{
 
   public addQueryFormGroup(i:number) {
     if(this.isFromExistingRule && i==this.ruleDivCounter){
-      this.rules.push(this.createQueryFormGroup());
+      this.rules.push(this.createRuleFormGroup());
       this.ruleDivCounter++;
       return;
     }
@@ -174,7 +178,7 @@ export class SampleModelComponent implements OnInit{
     }
 
     if (i == this.ruleDivCounter && this.setOperatorIndexArray[i] == null) {
-      this.rules.push(this.createQueryFormGroup());
+      this.rules.push(this.createRuleFormGroup());
       this.ruleDivCounter++;
       this.finalRuleArray.push(' ' + this.rules.value[i].logicalOperator + ' ');
       this.setOperatorIndexArray.push(this.finalRuleArray.length - 1)
@@ -295,7 +299,5 @@ export class SampleModelComponent implements OnInit{
     this.finalRuleArray.pop();
     this.displayRule();
   }
-
-
 
 }

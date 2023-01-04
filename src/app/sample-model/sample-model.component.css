@@ -27,11 +27,12 @@
   padding-left: 20px;
 }
 .queryField .brackets{
+  display: inline-block;
   width: 30px;height: 30px;
-  padding:0;
+  padding:4px 0 0px 11px;
   font-size: large;
-  text-align: center;
   border: 1px gray solid;
+  border-radius: 5px;
 }
 .Core-Icon--add::before{
   margin-top: 2px;

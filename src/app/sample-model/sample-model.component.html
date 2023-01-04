@@ -8,7 +8,7 @@
   <ng-template #contentTemplate>
     <form class="Core-Form" [formGroup]="addEditRuleSetForm">
       <coreui-form-field label="Value">
-        <input coreUIInput formControlName="value" style="width: 30%"/>
+        <input coreUIInput formControlName="value" style="width: 35%"/>
         <coreui-form-error>Required</coreui-form-error>
       </coreui-form-field>
     </form>
@@ -20,7 +20,7 @@
       <button type=button coreUIButton="icon" >
         <i coreUIIcon="add" (click)="addOpenParenthesis()"></i>
       </button>
-      <input coreUIInput class="brackets" placeholder="(" readonly coreUIFixedWidth="extraShort" >
+      <span class="brackets">(</span>
       <button type=button coreUIButton="icon">
         <i coreUIIcon="collapse" (click)="deleteParenthesis()"></i>
       </button>
@@ -29,7 +29,7 @@
       <button type=button coreUIButton="icon" style="margin-left: 15px" >
         <i coreUIIcon="add" (click)="addClosedParenthesis()" ></i>
       </button>
-      <input coreUIInput  class="brackets" placeholder=")" readonly coreUIFixedWidth="extraShort" >
+      <span class="brackets">)</span>
       <button type=button coreUIButton="icon">
         <i coreUIIcon="collapse" (click)="deleteParenthesis()" ></i>
       </button>
@@ -65,7 +65,7 @@
                     </coreui-form-field>
                   </coreui-checkbox-group>-->
                   <coreui-form-field class="queryField">
-                    <input coreUIInput id="EPcode" formControlName="EPcode" placeholder="EP Code" style="width: 70px; padding:8px 2px 8px; text-align: center; border: 1px solid" (click)="clickonEPcode(i)" readonly /> <!--[(ngModel)]="tempEP"-->
+                    <input coreUIInput id="EPcode" formControlName="EPcode" placeholder="EP Code" style="width: 70px; padding:8px 2px 8px; text-align: center; border: 1px solid" (click)="clickonEPcode(i)"/> <!--[(ngModel)]="tempEP"-->
                   </coreui-form-field>
 
                   <coreui-form-field class="queryField" >
