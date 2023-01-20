@@ -7,12 +7,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {SampleModelComponent} from "./sample-model/sample-model.component";
 import {ReactiveFormsModule} from "@angular/forms";
 import { CodeFormatComponent } from './code-format/code-format.component';
+import { ReviewsComponent } from './reviews/reviews.component';
 // import { CoreUIDataVizModule } from '@epsilon/core-ui/data-viz';
 
 
 @NgModule({
   declarations: [
-    AppComponent,SampleModelComponent, CodeFormatComponent
+    AppComponent,SampleModelComponent, CodeFormatComponent, ReviewsComponent
   ],
   imports: [
     BrowserModule,

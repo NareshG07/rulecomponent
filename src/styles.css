@@ -1,16 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
-
-
 #operator-sign > button  {
   margin : 5px ;
   width: 82px;
   text-align: center;
+  color: black;
 }
-
-/*coreui-panel.Core-Select-panel > div.Core-Panel-content.is-visible {*/
-/*  max-height: 160px;*/
-/*}*/
-
 div.Core-Panel-content.is-visible{
   max-height: 160px;
+  max-width: 380px;
 }

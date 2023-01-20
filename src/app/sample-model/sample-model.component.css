@@ -26,13 +26,17 @@
   float: left;
   padding-left: 20px;
 }
+.queryField input:read-only{
+  background-color: white;
+  border-color: var(--theme_surface-main-3_color-1);
+  color: var(--theme_inform-disabled-1_on-color-4);
+}
 .queryField .brackets{
   display: inline-block;
   width: 30px;height: 30px;
-  padding:4px 0 0px 11px;
-  font-size: large;
-  border: 1px gray solid;
-  border-radius: 5px;
+  padding:0 0 0 11px;
+  font-size: 20px;
+
 }
 .Core-Icon--add::before{
   margin-top: 2px;
@@ -49,3 +53,18 @@
 #EPcode{
   background-color: white;
 }
+.queryField .addButton{
+  color: var(--theme_badge-active-2_on-color-1);
+  background-color: var(--theme_badge-active-2_color-1);
+  border: 1px solid var(--theme_badge-active-2_on-color-1);
+  width: 25px;
+  height: 25px;
+}
+.queryField .deleteButton{
+  color: var(--theme_badge-error-2_on-color-1);
+  background-color: var(--theme_badge-error-2_color-1);
+  border: 1px solid var(--theme_badge-error-2_on-color-1);
+  width: 25px;
+  height: 25px;
+}
+
