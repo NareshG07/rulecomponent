@@ -25,27 +25,27 @@ export class SampleModelComponent {
   @ViewChild('addEditRuleSetModal', { static: true }) private addEditRuleSetModal!: ModalComponent;
   // public rule:Rule = new Rule( "EP1 = 'Y' OR ( EP2 = 'Y' AND EP3 = 'Y' )" )
   // public rule: Rule = new Rule("( EP2693 >= '1' OR EP2699 >= '1' OR EP2708 >= '1' OR EP2711 >= '1' OR EP2717 >= '1' OR EP2723 >= '1' OR EP2732 >= '1' )");
-  // public rule:Rule = new Rule("( ( EP1091 <= '4000' AND EP1091 >= '3001' ) OR ( EP1087 <= '4000' AND EP1087 >= '3001' ) OR ( EP1085 <= '4000' AND EP1085 >= '3001' ) OR ( EP1083 <= '4000' AND EP1083 >= '3001' ) OR ( EP1082 <= '4000' AND EP1082 >= '3001' ) OR ( EP1089 <= '4000' AND EP1089 >= '3001' ) )");
-
+   public rule:Rule = new Rule("( ( EP1091 <= '4000' AND EP1091 >= '3001' ) OR ( EP1087 <= '4000' AND EP1087 >= '3001' ) OR ( EP1085 <= '4000' AND EP1085 >= '3001' ) OR ( EP1083 <= '4000' AND EP1083 >= '3001' ) OR ( EP1082 <= '4000' AND EP1082 >= '3001' ) OR ( EP1089 <= '4000' AND EP1089 >= '3001' ) )");
+  // private rule: Rule | undefined;
 
   private items = [
-    'EP1 - Offline Name',
-    'EP2 - Offline Name',
-    'EP3 - Offline Name',
-    'EP4 - Offline Name',
-    'EP5 - Offline Name',
-    'EP6 - Offline Name',
+    'EP1091 - Offline Name',
+    'EP1087- Offline Name',
+    'EP1085 - Offline Name',
+    'EP1089 - Offline Name',
+    'EP1082 - Offline Name',
+    'EP1083 - Offline Name',
     'EP7 - Offline Name',
     'EP8 - Offline Name',
     'EP9 - Offline Name',
     'EP10 - Offline Name',
     'EP11 - Offline Name',
     'EP111 - Offline Name',
-    'EP22 - Offline Name'
+    'EP22 '
   ];
   public filteredItems = this.items;
 
-  private rule: Rule | undefined;
+
   // private rule:Rule = new Rule('')
   private index: number | undefined;
   private origin: string | undefined;
@@ -250,7 +250,9 @@ export class SampleModelComponent {
     });
     console.log(splitRuleConditions);
     for (let i = 0; i < this.rules.length; i++) {
-      this.rules.at(i).get('epCode')?.setValue(this.items?.filter(e => e.split('-')[0].trim() == splitRuleConditions[i][0]) );
+      let epCodeInput = this.items?.filter(e => e.split('-')[0].trim() == splitRuleConditions[i][0]).toString();
+      console.log(epCodeInput);
+      this.rules.at(i).get('epCode')?.setValue(epCodeInput);
       this.rules.at(i).get('operator')?.setValue(splitRuleConditions[i][1]);
       this.rules
         .at(i)
@@ -268,9 +270,9 @@ export class SampleModelComponent {
 
   public updateSingleRule(index: number) {
     console.log('in show')
-    let updateIndex = index;
+    console.log(this.rules.at(index).get('epCode')?.value);
     this.ruleCondition =
-      this.rules.at(index).get('epCode')?.value.split('-')[0].trim() +
+      this.rules.at(index).get('epCode')?.value.split('-')[0] +
       ' ' +
       this.rules.at(index).get('operator')?.value +
       ' ' +
@@ -282,7 +284,7 @@ export class SampleModelComponent {
       this.finalRuleArray.push(this.ruleCondition);
       this.ruleIndexArray.push(this.finalRuleArray.length - 1);
     } else {
-      updateIndex = this.ruleIndexArray[index];
+      let updateIndex = this.ruleIndexArray[index];
       this.finalRuleArray[updateIndex] = this.ruleCondition;
     }
     this.rules.at(index).get('logicalOperator')?.enable();
